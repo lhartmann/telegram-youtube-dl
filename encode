@@ -1,0 +1,32 @@
+#! /bin/bash
+FORCE=false
+[ "$1" == "--force" ] && {
+	FORCE=true
+	shift
+}
+
+encode() {
+	IN="$(realpath "$1")"
+	OUT="$IN-recoded.mkv"
+	PASSLOG="$IN-pass"
+	OPTS="-y -c:v h264 -b:v 2M -c:a copy -s 1600x900 -r:v 29.97"
+	[ -r "$OUT" ] && return
+	
+	cd /tmp/$$ 
+	ffmpeg -i "$IN" $OPTS $EXTRAOPTS -pass 1 -passlogfile "$PASSLOG" "$OUT"
+	ffmpeg -i "$IN" $OPTS $EXTRAOPTS -pass 2 -passlogfile "$PASSLOG" "$OUT"
+	
+	rm -f ffmpeg2pass*
+}
+
+needs_recode() {
+	ffmpeg -i "$1" 2>&1 \
+	| grep -v '60 fps' \
+	| grep -v '59.94 fps' \
+	| grep -qE "h264|Invalid data" && return 1
+	return 0
+}
+
+for i in "$@"; do
+	$FORCE || needs_recode "$i" && encode "$i" &
+done

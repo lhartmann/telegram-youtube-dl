@@ -1,0 +1,19 @@
+#! /bin/bash
+
+# Unique bot id, from @botfather.
+export BOT_ID="1234567890:abcdefghijklmnopqrstuvwxyz012345667"
+
+# Allowed user IDs, space separated
+export USER_IDS="012345678"
+
+# Parallel Encoding
+export PARALLEL_ENCODERS=2
+
+# Youtube login (Make sure you use an app password)
+#export YT_USER='john.doe'
+#export YT_PASS='12345678'
+
+#export YT_FORMAT='bestvideo[height<=1080]+bestaudio'
+export YT_FORMAT='mp4,720p'
+
+exec ./main
